@@ -259,46 +259,151 @@
     color: #aaa;
     margin-top: 40px;
   }
+
+  /* ---------- Selector d'idioma ---------- */
+  .lang-switcher {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 100;
+  }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e0ded7;
+    border-radius: 999px;
+    padding: 7px 13px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+
+  .lang-btn:hover { border-color: #c9c6bd; }
+
+  .lang-btn .chev {
+    font-size: 9px;
+    color: #999;
+    transition: transform .15s ease;
+  }
+
+  .lang-switcher.open .lang-btn .chev { transform: rotate(180deg); }
+
+  .lang-flag {
+    width: 18px;
+    height: 13px;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .lang-flag svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+  }
+
+  .lang-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    background: white;
+    border: 1px solid #e0ded7;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.14);
+    padding: 6px;
+    min-width: 170px;
+    display: none;
+  }
+
+  .lang-switcher.open .lang-menu { display: block; }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink);
+  }
+
+  .lang-option:hover, .lang-option:focus-visible { background: #f4f2ec; }
+
+  .lang-option .check {
+    margin-left: auto;
+    color: var(--green);
+    font-weight: 700;
+    visibility: hidden;
+  }
+
+  .lang-option[aria-selected="true"] .check { visibility: visible; }
+
+  @media (max-width: 560px) {
+    #langBtnLabel { display: none; }
+  }
 </style>
 </head>
 <body>
+
+<div class="lang-switcher" id="langSwitcher">
+  <button class="lang-btn" id="langBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Idioma / Language">
+    <span class="lang-flag" id="langBtnFlag"></span>
+    <span id="langBtnLabel">Català</span>
+    <span class="chev" aria-hidden="true">&#9660;</span>
+  </button>
+  <div class="lang-menu" id="langMenu" role="listbox" aria-label="Idioma / Language"></div>
+</div>
+
 <div class="wrap">
 
   <header>
     <span class="tag">Escola Font d'en Fargas</span>
-    <h1>Generador de Diplomes</h1>
-    <p>Tot es processa al teu navegador. Els noms dels infants no s'envien a cap servidor.</p>
+    <h1 data-i18n="title">Generador de Diplomes</h1>
+    <p data-i18n="intro">Tot es processa al teu navegador. Els noms dels infants no s'envien a cap servidor.</p>
   </header>
 
   <div class="step">
     <div class="step-num">1</div>
-    <h2>Llista d'infants (un nom per línia)</h2>
+    <h2 data-i18n="step1">Llista d'infants (un nom per línia)</h2>
     <textarea id="namesInput" placeholder="Jordi&#10;Jaume&#10;Victoria&#10;..."></textarea>
     <div class="name-count" id="nameCount"></div>
   </div>
 
   <div class="step">
     <div class="step-num">2</div>
-    <h2>Data que apareixerà al diploma</h2>
+    <h2 data-i18n="step2">Data que apareixerà al diploma</h2>
     <input type="text" id="dateInput" value="Juny 2026">
   </div>
 
   <div class="step">
     <div class="step-num">3</div>
-    <h2>Logo de l'escola (opcional)</h2>
+    <h2 data-i18n="step3">Logo de l'escola (opcional)</h2>
     <div class="logo-row">
-      <label class="file-btn" for="logoInput">Tria una imatge</label>
+      <label class="file-btn" for="logoInput" data-i18n="fileBtn">Tria una imatge</label>
       <input type="file" id="logoInput" accept="image/png,image/jpeg">
       <img id="logoPreview">
-      <button id="clearLogoBtn">treure logo</button>
+      <button id="clearLogoBtn" data-i18n="clearLogo">treure logo</button>
     </div>
-    <div class="hint">Si no en puges cap, la zona de la signatura es queda en blanc.</div>
+    <div class="hint" data-i18n="logoHint">Si no en puges cap, la zona de la signatura es queda en blanc.</div>
   </div>
 
   <div class="step">
     <div class="step-num">4</div>
-    <h2>Generar</h2>
+    <h2 data-i18n="step4">Generar</h2>
     <button class="primary" id="generateBtn" disabled>Carregant...</button>
+    <div class="hint" data-i18n="genHint">El text del diploma es generarà en l'idioma seleccionat a dalt a la dreta.</div>
     <div class="progress-bar" id="progressBar"><div id="progressFill"></div></div>
     <div id="status"></div>
   </div>
@@ -308,12 +413,12 @@
       <img id="previewImg">
     </div>
     <div class="download-row">
-      <a id="downloadZip">Descarregar tots els PNG (.zip)</a>
-      <a id="downloadPdf">Descarregar PDF únic</a>
+      <a id="downloadZip" data-i18n="downloadZip">Descarregar tots els PNG (.zip)</a>
+      <a id="downloadPdf" data-i18n="downloadPdf">Descarregar PDF únic</a>
     </div>
   </div>
 
-  <footer>Generat localment · cap dada surt d'aquest navegador. Made with <3 by Nicolás Damián Sadofschi</footer>
+  <footer><span data-i18n="footer">Generat localment · cap dada surt d'aquest navegador.</span> Made with <3 by Nicolás Damián Sadofschi</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -347,12 +452,226 @@
   const LOGO_SIGN_CX = 1050, LOGO_SIGN_CY = 1000, LOGO_SIGN_W = 200;
   const BAND_RED = "rgb(254,85,88)";
 
-  const SUBTITLE = "ES CONCEDEIX A";
-  const CONGRATS = "MOLT BONA FEINA!";
-  const DESCRIPTION_LINES = [
-    "Per haver completat amb èxit el curs escolar",
-    "i haver demostrat esforç, il·lusió i companyerisme."
-  ];
+  // ---------- Idiomes / i18n ----------
+  const FLAGS = {
+    ca: '<svg viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg"><rect width="18" height="13" fill="#FCDD09"/><g fill="#DA121A"><rect y="1.44" width="18" height="1.45"/><rect y="4.33" width="18" height="1.45"/><rect y="7.22" width="18" height="1.45"/><rect y="10.11" width="18" height="1.45"/></g></svg>',
+    es: '<svg viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg"><rect width="18" height="13" fill="#AA151B"/><rect y="3.25" width="18" height="6.5" fill="#F1BF00"/></svg>',
+    en: '<svg viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg"><rect width="18" height="13" fill="#012169"/><path d="M0 0l18 13M18 0L0 13" stroke="#fff" stroke-width="2.6"/><path d="M0 0l18 13M18 0L0 13" stroke="#C8102E" stroke-width="1.1"/><path d="M9 0v13M0 6.5h18" stroke="#fff" stroke-width="4.4"/><path d="M9 0v13M0 6.5h18" stroke="#C8102E" stroke-width="2.6"/></svg>',
+    fr: '<svg viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="13" fill="#002395"/><rect x="6" width="6" height="13" fill="#fff"/><rect x="12" width="6" height="13" fill="#ED2939"/></svg>',
+    de: '<svg viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg"><rect width="18" height="4.33" fill="#000"/><rect y="4.33" width="18" height="4.34" fill="#DD0000"/><rect y="8.67" width="18" height="4.33" fill="#FFCE00"/></svg>'
+  };
+
+  const LANGS = {
+    ca: {
+      name: "Català",
+      ui: {
+        docTitle: "Generador de Diplomes — Escola Font d'en Fargas",
+        title: "Generador de Diplomes",
+        intro: "Tot es processa al teu navegador. Els noms dels infants no s'envien a cap servidor.",
+        step1: "Llista d'infants (un nom per línia)",
+        namesPlaceholder: "Jordi\nJaume\nVictoria\n...",
+        step2: "Data que apareixerà al diploma",
+        step3: "Logo de l'escola (opcional)",
+        fileBtn: "Tria una imatge",
+        clearLogo: "treure logo",
+        logoHint: "Si no en puges cap, la zona de la signatura es queda en blanc.",
+        step4: "Generar",
+        genHint: "El text del diploma es generarà en l'idioma seleccionat a dalt a la dreta.",
+        loading: "Carregant...",
+        generate: "Generar diplomes",
+        countOne: "infant",
+        countOther: "infants",
+        addName: "Afegeix com a mínim un nom.",
+        dupes: "Hi ha noms duplicats:",
+        generating: "Generant...",
+        generatingN: "Generant {i} / {n}...",
+        packing: "Empaquetant...",
+        done: "Llest: {n} diplomes generats.",
+        fontError: "Error carregant les tipografies: ",
+        downloadZip: "Descarregar tots els PNG (.zip)",
+        downloadPdf: "Descarregar PDF únic",
+        zipFile: "Diplomes_PNG.zip",
+        pdfFile: "Diplomes.pdf",
+        footer: "Generat localment · cap dada surt d'aquest navegador."
+      },
+      diploma: {
+        subtitle: "ES CONCEDEIX A",
+        desc1: "Per haver completat amb èxit el curs escolar",
+        desc2: "i haver demostrat esforç, il·lusió i companyerisme.",
+        congrats: "MOLT BONA FEINA!",
+        defaultDate: "Juny 2026"
+      }
+    },
+    es: {
+      name: "Español",
+      ui: {
+        docTitle: "Generador de Diplomas — Escola Font d'en Fargas",
+        title: "Generador de Diplomas",
+        intro: "Todo se procesa en tu navegador. Los nombres de los niños no se envían a ningún servidor.",
+        step1: "Lista de niños (un nombre por línea)",
+        namesPlaceholder: "María\nPablo\nLucía\n...",
+        step2: "Fecha que aparecerá en el diploma",
+        step3: "Logo de la escuela (opcional)",
+        fileBtn: "Elige una imagen",
+        clearLogo: "quitar logo",
+        logoHint: "Si no subes ninguno, la zona de la firma se queda en blanco.",
+        step4: "Generar",
+        genHint: "El texto del diploma se generará en el idioma seleccionado arriba a la derecha.",
+        loading: "Cargando...",
+        generate: "Generar diplomas",
+        countOne: "niño",
+        countOther: "niños",
+        addName: "Añade al menos un nombre.",
+        dupes: "Hay nombres duplicados:",
+        generating: "Generando...",
+        generatingN: "Generando {i} / {n}...",
+        packing: "Empaquetando...",
+        done: "Listo: {n} diplomas generados.",
+        fontError: "Error cargando las tipografías: ",
+        downloadZip: "Descargar todos los PNG (.zip)",
+        downloadPdf: "Descargar PDF único",
+        zipFile: "Diplomas_PNG.zip",
+        pdfFile: "Diplomas.pdf",
+        footer: "Generado localmente · ningún dato sale de este navegador."
+      },
+      diploma: {
+        subtitle: "SE CONCEDE A",
+        desc1: "Por haber completado con éxito el curso escolar",
+        desc2: "y haber demostrado esfuerzo, ilusión y compañerismo.",
+        congrats: "¡MUY BUEN TRABAJO!",
+        defaultDate: "Junio 2026"
+      }
+    },
+    en: {
+      name: "English",
+      ui: {
+        docTitle: "Diploma Generator — Escola Font d'en Fargas",
+        title: "Diploma Generator",
+        intro: "Everything is processed in your browser. Children's names are never sent to any server.",
+        step1: "List of children (one name per line)",
+        namesPlaceholder: "Emma\nOliver\nSophie\n...",
+        step2: "Date shown on the diploma",
+        step3: "School logo (optional)",
+        fileBtn: "Choose an image",
+        clearLogo: "remove logo",
+        logoHint: "If you don't upload one, the signature area is left blank.",
+        step4: "Generate",
+        genHint: "The diploma text will be generated in the language selected at the top right.",
+        loading: "Loading...",
+        generate: "Generate diplomas",
+        countOne: "child",
+        countOther: "children",
+        addName: "Add at least one name.",
+        dupes: "There are duplicate names:",
+        generating: "Generating...",
+        generatingN: "Generating {i} / {n}...",
+        packing: "Packaging...",
+        done: "Done: {n} diplomas generated.",
+        fontError: "Error loading fonts: ",
+        downloadZip: "Download all PNGs (.zip)",
+        downloadPdf: "Download single PDF",
+        zipFile: "Diplomas_PNG.zip",
+        pdfFile: "Diplomas.pdf",
+        footer: "Generated locally · no data ever leaves this browser."
+      },
+      diploma: {
+        subtitle: "AWARDED TO",
+        desc1: "For successfully completing the school year",
+        desc2: "and showing effort, enthusiasm and friendship.",
+        congrats: "GREAT JOB!",
+        defaultDate: "June 2026"
+      }
+    },
+    fr: {
+      name: "Français",
+      ui: {
+        docTitle: "Générateur de Diplômes — Escola Font d'en Fargas",
+        title: "Générateur de Diplômes",
+        intro: "Tout est traité dans votre navigateur. Les noms des enfants ne sont envoyés à aucun serveur.",
+        step1: "Liste des enfants (un nom par ligne)",
+        namesPlaceholder: "Camille\nHugo\nChloé\n...",
+        step2: "Date qui apparaîtra sur le diplôme",
+        step3: "Logo de l'école (facultatif)",
+        fileBtn: "Choisir une image",
+        clearLogo: "retirer le logo",
+        logoHint: "Si vous n'en téléversez pas, la zone de signature reste vide.",
+        step4: "Générer",
+        genHint: "Le texte du diplôme sera généré dans la langue sélectionnée en haut à droite.",
+        loading: "Chargement...",
+        generate: "Générer les diplômes",
+        countOne: "enfant",
+        countOther: "enfants",
+        addName: "Ajoutez au moins un nom.",
+        dupes: "Il y a des noms en double :",
+        generating: "Génération...",
+        generatingN: "Génération {i} / {n}...",
+        packing: "Empaquetage...",
+        done: "Terminé : {n} diplômes générés.",
+        fontError: "Erreur de chargement des polices : ",
+        downloadZip: "Télécharger tous les PNG (.zip)",
+        downloadPdf: "Télécharger le PDF unique",
+        zipFile: "Diplomes_PNG.zip",
+        pdfFile: "Diplomes.pdf",
+        footer: "Généré localement · aucune donnée ne quitte ce navigateur."
+      },
+      diploma: {
+        subtitle: "DÉCERNÉ À",
+        desc1: "Pour avoir terminé avec succès l'année scolaire",
+        desc2: "et avoir fait preuve d'effort, d'enthousiasme et de camaraderie.",
+        congrats: "EXCELLENT TRAVAIL !",
+        defaultDate: "Juin 2026"
+      }
+    },
+    de: {
+      name: "Deutsch",
+      ui: {
+        docTitle: "Diplom-Generator — Escola Font d'en Fargas",
+        title: "Diplom-Generator",
+        intro: "Alles wird in deinem Browser verarbeitet. Die Namen der Kinder werden an keinen Server gesendet.",
+        step1: "Liste der Kinder (ein Name pro Zeile)",
+        namesPlaceholder: "Lena\nFelix\nMia\n...",
+        step2: "Datum, das auf dem Diplom erscheint",
+        step3: "Schullogo (optional)",
+        fileBtn: "Bild auswählen",
+        clearLogo: "Logo entfernen",
+        logoHint: "Wenn du keins hochlädst, bleibt der Unterschriftsbereich leer.",
+        step4: "Generieren",
+        genHint: "Der Diplomtext wird in der oben rechts ausgewählten Sprache erstellt.",
+        loading: "Wird geladen...",
+        generate: "Diplome generieren",
+        countOne: "Kind",
+        countOther: "Kinder",
+        addName: "Füge mindestens einen Namen hinzu.",
+        dupes: "Es gibt doppelte Namen:",
+        generating: "Wird generiert...",
+        generatingN: "Generiere {i} / {n}...",
+        packing: "Wird verpackt...",
+        done: "Fertig: {n} Diplome erstellt.",
+        fontError: "Fehler beim Laden der Schriften: ",
+        downloadZip: "Alle PNGs herunterladen (.zip)",
+        downloadPdf: "Einzelnes PDF herunterladen",
+        zipFile: "Diplome_PNG.zip",
+        pdfFile: "Diplome.pdf",
+        footer: "Lokal generiert · keine Daten verlassen diesen Browser."
+      },
+      diploma: {
+        subtitle: "VERLIEHEN AN",
+        desc1: "Für den erfolgreichen Abschluss des Schuljahres",
+        desc2: "und für Einsatz, Begeisterung und Kameradschaft.",
+        congrats: "TOLLE ARBEIT!",
+        defaultDate: "Juni 2026"
+      }
+    }
+  };
+
+  const LANG_ORDER = ['ca','es','en','fr','de'];
+  const DEFAULT_DATES = LANG_ORDER.map(c => LANGS[c].diploma.defaultDate);
+
+  let currentLang = null;
+  try { currentLang = localStorage.getItem('diplomes_lang'); } catch(e){}
+  if(!LANGS[currentLang]) currentLang = 'ca';
+
+  function t(key){ return LANGS[currentLang].ui[key]; }
 
   // ---------- State ----------
   let templateImg = null;
@@ -376,7 +695,7 @@
 
   function updateCount(){
     const n = getNames().length;
-    nameCount.textContent = n + (n === 1 ? " infant" : " infants");
+    nameCount.textContent = n + " " + (n === 1 ? t('countOne') : t('countOther'));
   }
   function getNames(){
     return namesInput.value.split("\n").map(s=>s.trim()).filter(Boolean);
@@ -409,10 +728,12 @@
   });
 
   // ---------- Load embedded assets ----------
+  let assetsReady = false;
   function checkReady(){
     if(templateImg && fontsReady){
+      assetsReady = true;
       generateBtn.disabled = false;
-      generateBtn.textContent = "Generar diplomes";
+      generateBtn.textContent = t('generate');
     }
   }
 
@@ -427,7 +748,7 @@
     fontsReady = true;
     checkReady();
   }).catch(err=>{
-    statusEl.textContent = "Error carregant les tipografies: " + err;
+    statusEl.textContent = t('fontError') + err;
   });
 
   // ---------- Drawing helpers ----------
@@ -440,6 +761,14 @@
     start = start || 84; floor = floor || 34;
     for(let size = start; size > floor; size -= 2){
       ctx.font = size + "px Pacifico";
+      if(ctx.measureText(text).width <= maxWidth) return size;
+    }
+    return floor;
+  }
+
+  function fitFont(ctx, text, maxWidth, start, floor, family){
+    for(let size = start; size > floor; size--){
+      ctx.font = size + "px " + family;
       if(ctx.measureText(text).width <= maxWidth) return size;
     }
     return floor;
@@ -488,21 +817,26 @@
       ctx.drawImage(logoImg, LOGO_SIGN_CX - lw/2, LOGO_SIGN_CY - lh/2, lw, lh);
     }
 
-    // 5. Textos fijos catalán
+    // 5. Textos fijos en el idioma seleccionado
+    const D = LANGS[currentLang].diploma;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     ctx.fillStyle = 'white';
-    ctx.font = '38px ComicNeueBold';
-    ctx.fillText(SUBTITLE, W/2, 447);
+    ctx.font = fitFont(ctx, D.subtitle, 560, 38, 24, 'ComicNeueBold') + "px ComicNeueBold";
+    ctx.fillText(D.subtitle, W/2, 447);
 
     ctx.fillStyle = 'black';
-    ctx.font = '28px ComicNeueBold';
-    ctx.fillText(DESCRIPTION_LINES[0], W/2, 716);
-    ctx.fillText(DESCRIPTION_LINES[1], W/2, 756);
+    const descSize = Math.min(
+      fitFont(ctx, D.desc1, 740, 28, 18, 'ComicNeueBold'),
+      fitFont(ctx, D.desc2, 740, 28, 18, 'ComicNeueBold')
+    );
+    ctx.font = descSize + "px ComicNeueBold";
+    ctx.fillText(D.desc1, W/2, 716);
+    ctx.fillText(D.desc2, W/2, 756);
 
-    ctx.font = '42px ComicNeueBold';
-    ctx.fillText(CONGRATS, W/2, 822);
+    ctx.font = fitFont(ctx, D.congrats, 720, 42, 26, 'ComicNeueBold') + "px ComicNeueBold";
+    ctx.fillText(D.congrats, W/2, 822);
 
     ctx.font = '30px ComicNeueBold';
     ctx.fillText(dateText, 572, 1000);
@@ -534,19 +868,19 @@
   generateBtn.addEventListener('click', async ()=>{
     const names = getNames();
     if(names.length === 0){
-      statusEl.textContent = "Afegeix com a mínim un nom.";
+      statusEl.textContent = t('addName');
       return;
     }
     const dupes = names.filter((n,i)=> names.indexOf(n) !== i);
     if(dupes.length){
-      alert("Hi ha noms duplicats:\n" + [...new Set(dupes)].join("\n"));
+      alert(t('dupes') + "\n" + [...new Set(dupes)].join("\n"));
       return;
     }
 
     generateBtn.disabled = true;
     resultsEl.classList.remove('show');
     progressBar.style.display = 'block';
-    statusEl.textContent = "Generant...";
+    statusEl.textContent = t('generating');
 
     const dateText = dateInput.value.trim() || "";
     const base = buildBaseCanvas(dateText);
@@ -570,25 +904,110 @@
       pdf.addImage(dataUrl, 'PNG', 0, 0, W, H);
 
       progressFill.style.width = Math.round(((i+1)/names.length)*100) + "%";
-      statusEl.textContent = "Generant " + (i+1) + " / " + names.length + "...";
+      statusEl.textContent = t('generatingN').replace('{i}', i+1).replace('{n}', names.length);
       if(i % 4 === 0) await sleep(0); // cede el hilo para que la UI no se congele
     }
 
-    statusEl.textContent = "Empaquetant...";
+    statusEl.textContent = t('packing');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     const pdfBlob = pdf.output('blob');
 
     downloadZip.href = URL.createObjectURL(zipBlob);
-    downloadZip.download = "Diplomes_PNG.zip";
+    downloadZip.download = t('zipFile');
     downloadPdf.href = URL.createObjectURL(pdfBlob);
-    downloadPdf.download = "Diplomes.pdf";
+    downloadPdf.download = t('pdfFile');
 
     previewImg.src = firstDataUrl;
     resultsEl.classList.add('show');
     progressBar.style.display = 'none';
-    statusEl.textContent = "Llest: " + names.length + " diplomes generats.";
+    statusEl.textContent = t('done').replace('{n}', names.length);
     generateBtn.disabled = false;
   });
+
+  // ---------- Selector d'idioma ----------
+  const langSwitcher = document.getElementById('langSwitcher');
+  const langBtn      = document.getElementById('langBtn');
+  const langMenu     = document.getElementById('langMenu');
+  const langBtnLabel = document.getElementById('langBtnLabel');
+  const langBtnFlag  = document.getElementById('langBtnFlag');
+
+  LANG_ORDER.forEach(code=>{
+    const opt = document.createElement('button');
+    opt.type = 'button';
+    opt.className = 'lang-option';
+    opt.setAttribute('role', 'option');
+    opt.dataset.lang = code;
+    opt.innerHTML = '<span class="lang-flag">' + FLAGS[code] + '</span><span>' + LANGS[code].name + '</span><span class="check">&#10003;</span>';
+    opt.addEventListener('click', ()=>{
+      applyLanguage(code);
+      closeLangMenu();
+      langBtn.focus();
+    });
+    langMenu.appendChild(opt);
+  });
+
+  function openLangMenu(){
+    langSwitcher.classList.add('open');
+    langBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeLangMenu(){
+    langSwitcher.classList.remove('open');
+    langBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  langBtn.addEventListener('click', ()=>{
+    langSwitcher.classList.contains('open') ? closeLangMenu() : openLangMenu();
+  });
+  langBtn.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      openLangMenu();
+      langMenu.firstElementChild.focus();
+    }
+  });
+  langMenu.addEventListener('keydown', (e)=>{
+    const opts = [...langMenu.children];
+    const idx = opts.indexOf(document.activeElement);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); opts[(idx+1) % opts.length].focus(); }
+    if(e.key === 'ArrowUp'){ e.preventDefault(); opts[(idx-1+opts.length) % opts.length].focus(); }
+  });
+  document.addEventListener('click', (e)=>{
+    if(!langSwitcher.contains(e.target)) closeLangMenu();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){ closeLangMenu(); }
+  });
+
+  function applyLanguage(code){
+    currentLang = code;
+    try { localStorage.setItem('diplomes_lang', code); } catch(e){}
+
+    document.documentElement.lang = code;
+    document.title = t('docTitle');
+
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(LANGS[code].ui[key] !== undefined) el.textContent = LANGS[code].ui[key];
+    });
+
+    namesInput.placeholder = t('namesPlaceholder');
+
+    // Si la data encara és el valor per defecte d'un idioma, es tradueix també.
+    if(dateInput.value.trim() === "" || DEFAULT_DATES.includes(dateInput.value.trim())){
+      dateInput.value = LANGS[code].diploma.defaultDate;
+    }
+
+    generateBtn.textContent = assetsReady ? t('generate') : t('loading');
+    updateCount();
+
+    langBtnLabel.textContent = LANGS[code].name;
+    langBtnFlag.innerHTML = FLAGS[code];
+    [...langMenu.children].forEach(o=>{
+      o.setAttribute('aria-selected', o.dataset.lang === code ? 'true' : 'false');
+    });
+  }
+
+  applyLanguage(currentLang);
 
 })();
 </script>
